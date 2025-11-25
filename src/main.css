@@ -1,0 +1,19 @@
+.qu-blue {
+  color: #0c2340 !important;
+}
+
+.qu-yellow {
+  color: #ffb81c !important;
+}
+
+.qu-blue-bg {
+  background-color: #0c2340 !important;
+}
+
+.qu-yellow-bg {
+  background-color: #ffb81c !important;
+}
+
+.btn-no-border {
+    border: none;
+}
