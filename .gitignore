@@ -145,4 +145,6 @@ vite.config.ts.timestamp-*
 ._*
 .Spotlight-V100
 .Trashes
+.idea/
+.vscode/
 desktop.ini
