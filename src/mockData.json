@@ -1,0 +1,92 @@
+{
+  "users": [
+    { "id": 1, "name": "Ruby Elkharboutly", "role": "professor" },
+    { "id": 2, "name": "Hunter Pageau", "role": "student" },
+    { "id": 3, "name": "Evan Alves", "role": "student" },
+    { "id": 4, "name": "Jean LaFrance", "role": "student" }
+  ],
+  "courses": [
+    {
+      "id": 1,
+      "code": "SER340",
+      "name": "Full Stack Development",
+      "professorId": 1,
+      "description": "Introduction to Full Stack development"
+    },
+    {
+      "id": 2,
+      "code": "SER491",
+      "name": "Senior Capstone I",
+      "professorId": 1,
+      "description": "Senior Project"
+    }
+  ],
+  "lessons": [
+    {
+      "id": 1,
+      "courseId": 1,
+      "title": "Lesson 1 - Course Introduction",
+      "date": "2025-08-26",
+      "description": "Software Requirements Analysis",
+      "week": 1
+    },
+    {
+      "id": 2,
+      "courseId": 1,
+      "title": "Lesson 2 - Definitions and SE Cycle",
+      "date": "2025-08-28",
+      "description": "Software life cycle",
+      "week": 1
+    },
+    {
+      "id": 3,
+      "courseId": 1,
+      "title": "Lesson 3 - Analysis",
+      "date": "2025-09-02",
+      "description": "Problem Analysis",
+      "week": 2
+    },
+    {
+      "id": 4,
+      "courseId": 1,
+      "title": "Lesson 4 - Domain Modeling",
+      "date": "2025-09-04",
+      "description": "Modeling domains",
+      "week": 2
+    },
+    {
+      "id": 5,
+      "courseId": 1,
+      "title": "Lesson 5 - Interviewing",
+      "date": "2025-09-09",
+      "description": "Obtaining requirements through interviews",
+      "week": 2
+    }
+  ],
+  "feedbacks": [
+    {
+      "id": 1,
+      "lessonId": 1,
+      "studentId": 2,
+      "rating": 5,
+      "comment": "Great introduction, very clear!",
+      "submittedAt": "2025-08-26T10:00:00Z"
+    },
+    {
+      "id": 2,
+      "lessonId": 2,
+      "studentId": 4,
+      "rating": 3,
+      "comment": "SE cycles are a little confusing",
+      "submittedAt": "2025-08-26T12:30:00Z"
+    },
+    {
+      "id": 3,
+      "lessonId": 2,
+      "studentId": 3,
+      "rating": 4,
+      "comment": "I liked the presentation pictures",
+      "submittedAt": "2025-09-02T09:15:00Z"
+    }
+  ]
+}
