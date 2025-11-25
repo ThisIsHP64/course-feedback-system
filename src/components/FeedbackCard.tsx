@@ -3,9 +3,9 @@
  * Card component to display lesson feedback and star rating
  */
 
-import { Card } from "react-bootstrap";
-import { Rating } from "@smastrom/react-rating";
-import "@smastrom/react-rating/style.css";
+import { Card } from 'react-bootstrap';
+import { Rating } from '@smastrom/react-rating';
+import '@smastrom/react-rating/style.css';
 
 type CardProps = {
   comment: string;
