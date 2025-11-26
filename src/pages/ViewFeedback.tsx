@@ -8,8 +8,6 @@ import { Alert, Col, Container, Row } from 'react-bootstrap';
 
 // Mock data
 import data from '../mockData.json';
-import type { Lesson } from '../types/types';
-import WeekLessonsCard from '../components/WeekLessonsCard';
 import FeedbackCard from '../components/FeedbackCard';
 
 function ViewFeedback() {

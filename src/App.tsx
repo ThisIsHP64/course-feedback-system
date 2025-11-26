@@ -1,11 +1,7 @@
-import ViewFeedback from './pages/ViewFeedback';
+import Login from "./pages/Login";
 
 function App() {
-  return (
-    <>
-      <ViewFeedback />
-    </>
-  );
+  return <Login />;
 }
 
 export default App;
