@@ -1,11 +1,6 @@
 import { Button } from 'react-bootstrap';
 import { Form } from 'react-bootstrap';
 import { Container } from 'react-bootstrap';
-import { Image } from 'react-bootstrap';
-import { Card } from 'react-bootstrap';
-import { Row } from 'react-bootstrap';
-import { Col } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
 
 function ResetPassword() {
   return (
