@@ -11,14 +11,16 @@
       "code": "SER340",
       "name": "Full Stack Development",
       "professorId": 1,
-      "description": "Introduction to Full Stack development"
+      "description": "Introduction to Full Stack development",
+      "semester": "Fall 2025"
     },
     {
       "id": 2,
       "code": "SER491",
       "name": "Senior Capstone I",
       "professorId": 1,
-      "description": "Senior Project"
+      "description": "Senior Project",
+      "semester": "Fall 2025"
     }
   ],
   "lessons": [

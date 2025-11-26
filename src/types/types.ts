@@ -2,7 +2,7 @@
 export interface User {
   id: number;
   name: string;
-  role: "student" | "professor";
+  role: 'student' | 'professor';
 }
 
 // Course Info
@@ -12,6 +12,7 @@ export interface Course {
   name: string;
   professorId: string;
   description: string;
+  semester: string;
 }
 
 // Lesson Info

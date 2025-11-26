@@ -35,7 +35,7 @@ function LogFeedback() {
   const lessonCourse = data.courses.find(
     (course) => course.id === lesson?.courseId
   );
-  const professor = data.users.find(
+  const professorName = data.users.find(
     (prof) => prof.id === lessonCourse?.professorId
   )?.name;
 
@@ -77,11 +77,11 @@ function LogFeedback() {
       <Row style={{ minHeight: '100vh' }}>
         <Col md={3} className="p-4 border-end border-dark">
           <div style={{ width: '250px' }}>
-            <h5 className="mb-3">{lesson.title}</h5>
+            <h5 className="mb-2">{lesson.title}</h5>
             <p className="text-muted small">{lesson.description}</p>
             <small className="text-secondary">
               <strong>Professor</strong>
-              <p>{professor}</p>
+              <p>{professorName}</p>
             </small>
             <small className="text-secondary">
               <strong>Week {lesson.week}</strong>
@@ -102,7 +102,7 @@ function LogFeedback() {
                 {error && <Alert variant="danger">{error}</Alert>}
                 <Form.Group className="mb-4">
                   <Form.Label>Rating</Form.Label>
-                  <Form.Text className="text-muted d-block">
+                  <Form.Text className="text-muted d-block pb-2">
                     Rate this lesson 1-5 stars.
                   </Form.Text>
                   <div style={{ maxWidth: 300 }}>
@@ -111,7 +111,7 @@ function LogFeedback() {
                 </Form.Group>
                 <Form.Group className="mb-4">
                   <Form.Label>Feedback</Form.Label>
-                  <Form.Text className="text-muted d-block">
+                  <Form.Text className="text-muted d-block pb-2">
                     Explain your thoughts on the lesson
                   </Form.Text>
                   <Form.Control
