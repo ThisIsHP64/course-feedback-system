@@ -23,8 +23,27 @@
       "description": "Senior Project",
       "semester": "Fall 2025",
       "avgGrade": 90
+    },
+    {
+      "id": 3,
+      "code": "SER225",
+      "name": "Intro to Software Development",
+      "professorId": 1,
+      "description": "Software development mock workshop",
+      "semester": "Fall 2025",
+      "avgGrade": 100
+    },
+    {
+      "id": 4,
+      "code": "GDD140",
+      "name": "Creativity and Computation",
+      "professorId": 1,
+      "description": "Introduction to game design in JavaScript",
+      "semester": "Fall 2025",
+      "avgGrade": 98
     }
   ],
+
   "lessons": [
     {
       "id": 1,
