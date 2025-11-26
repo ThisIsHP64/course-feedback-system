@@ -1,9 +1,9 @@
-import LessonList from './pages/LessonList';
+import ViewFeedback from './pages/ViewFeedback';
 
 function App() {
   return (
     <>
-      <LessonList />
+      <ViewFeedback />
     </>
   );
 }

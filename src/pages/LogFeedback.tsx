@@ -76,7 +76,7 @@ function LogFeedback() {
     <>
       <Row style={{ minHeight: '100vh' }}>
         <Col md={3} className="p-4 border-end border-dark">
-          <div style={{ width: '250px' }}>
+          <div style={{ maxWidth: '200px' }}>
             <h5 className="mb-2">{lesson.title}</h5>
             <p className="text-muted small">{lesson.description}</p>
             <small className="text-secondary">

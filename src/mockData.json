@@ -12,7 +12,8 @@
       "name": "Full Stack Development",
       "professorId": 1,
       "description": "Introduction to Full Stack development",
-      "semester": "Fall 2025"
+      "semester": "Fall 2025",
+      "avgGrade": 87
     },
     {
       "id": 2,
@@ -20,14 +21,15 @@
       "name": "Senior Capstone I",
       "professorId": 1,
       "description": "Senior Project",
-      "semester": "Fall 2025"
+      "semester": "Fall 2025",
+      "avgGrade": 90
     }
   ],
   "lessons": [
     {
       "id": 1,
       "courseId": 1,
-      "title": "Lesson 1 - Course Introduction",
+      "title": "Course Introduction",
       "date": "2025-08-26",
       "description": "Software Requirements Analysis",
       "week": 1
@@ -35,7 +37,7 @@
     {
       "id": 2,
       "courseId": 1,
-      "title": "Lesson 2 - Definitions and SE Cycle",
+      "title": "Definitions and SE Cycle",
       "date": "2025-08-28",
       "description": "Software life cycle",
       "week": 1
@@ -43,7 +45,7 @@
     {
       "id": 3,
       "courseId": 1,
-      "title": "Lesson 3 - Analysis",
+      "title": "Analysis",
       "date": "2025-09-02",
       "description": "Problem Analysis",
       "week": 2
@@ -51,7 +53,7 @@
     {
       "id": 4,
       "courseId": 1,
-      "title": "Lesson 4 - Domain Modeling",
+      "title": "Domain Modeling",
       "date": "2025-09-04",
       "description": "Modeling domains",
       "week": 2
@@ -59,7 +61,7 @@
     {
       "id": 5,
       "courseId": 1,
-      "title": "Lesson 5 - Interviewing",
+      "title": "Interviewing",
       "date": "2025-09-09",
       "description": "Obtaining requirements through interviews",
       "week": 2
@@ -76,7 +78,7 @@
     },
     {
       "id": 2,
-      "lessonId": 2,
+      "lessonId": 1,
       "studentId": 4,
       "rating": 3,
       "comment": "SE cycles are a little confusing",
@@ -84,7 +86,7 @@
     },
     {
       "id": 3,
-      "lessonId": 2,
+      "lessonId": 1,
       "studentId": 3,
       "rating": 4,
       "comment": "I liked the presentation pictures",

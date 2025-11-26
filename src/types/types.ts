@@ -13,6 +13,7 @@ export interface Course {
   professorId: string;
   description: string;
   semester: string;
+  avgGrage: number;
 }
 
 // Lesson Info

@@ -60,11 +60,15 @@ function LessonList() {
     <>
       <Row style={{ minHeight: '100vh' }}>
         <Col md={3} className="p-4 border-end border-dark">
-          <div style={{ width: '250px' }}>
+          <div style={{ maxWidth: '200px' }}>
             <h5 className="mb-2">Course Information</h5>
             <p className="text-muted small">
               {course.code} - {course.name}
             </p>
+            <small className="text-secondary">
+              <strong>Average Grade</strong>
+              <p>{course.avgGrade}/100</p>
+            </small>
             <small className="text-secondary">
               <strong>Professor</strong>
               <p>{professorName}</p>

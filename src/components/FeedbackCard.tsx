@@ -15,15 +15,17 @@ type CardProps = {
 
 function FeedbackCard({ comment, rating, date }: CardProps) {
   return (
-    <Card className="mb-3">
+    <Card className="mb-3 shadow-sm p-0">
       <Card.Body>
         <Card.Title>Feedback</Card.Title>
-        <div className="mb-2">
+        <Card.Text>{comment}</Card.Text>
+        <div style={{ maxWidth: 160 }} className="mb-2">
           <Rating value={rating} readOnly />
         </div>
-        <Card.Text>{comment}</Card.Text>
       </Card.Body>
-      <Card.Footer>{new Date(date).toLocaleDateString()}</Card.Footer>
+      <Card.Footer className="text-muted small">
+        {new Date(date).toLocaleDateString()}
+      </Card.Footer>
     </Card>
   );
 }
