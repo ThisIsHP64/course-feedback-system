@@ -1,7 +1,8 @@
 import Login from "./pages/Login";
+import ResetPassword from "./pages/ResetPassword";
 
 function App() {
-  return <Login />;
+  return <ResetPassword />;
 }
 
 export default App;

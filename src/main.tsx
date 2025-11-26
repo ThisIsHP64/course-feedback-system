@@ -5,7 +5,7 @@ import App from './App.tsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './main.css';
-import Navheader from './components/NavHeader.tsx';
+import Navheader from './components/Navheader.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
