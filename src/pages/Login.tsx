@@ -6,7 +6,7 @@ import { Card } from "react-bootstrap";
 import { Row } from "react-bootstrap";
 import { Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import logo from "../assets/logo.png";
+import logo from "../assets/feedbackLogo.jpg";
 
 function Login() {
   return (
@@ -16,11 +16,7 @@ function Login() {
         className="d-flex flex-column justify-content-center align-items-center"
         style={{ minHeight: "100vh" }}
       >
-        <Image src={logo} style={{ width: "300px" }} fluid />
-        <div className="d-flex align-items-center justify-content-center gap-4">
-          <h3>Feedback App</h3>
-          <i className="bi bi-chat-left-text" style={{ fontSize: "60px" }}></i>
-        </div>
+        <Image src={logo} className="mb-4" style={{ height: "140px" }} fluid />
 
         <Card
           className="qu-blue-bg rounded-5 mb-4"
