@@ -2,14 +2,14 @@ import { Container, Card, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import data from '../mockData.json';
 
-function CourseList() {
+function ProfessorCourseList() {
   return (
     <>
       <Container fluid>
         <Row className="m-4 align-items-center">
           <Col>
             <h3 className="m-0 qu-blue text-decoration-underline">
-              Current Courses
+              Courses Taught
             </h3>
           </Col>
           <Col className="d-flex justify-content-end align-items-end">
@@ -17,10 +17,10 @@ function CourseList() {
           </Col>
         </Row>
         <Row className="gy-4 mx-4">
-          {data.courses.map((course) => (
+          {data.courses.slice(0, 2).map((course) => (
             <Col md={4} key={course.id}>
               <Link
-                to={`/course/${course.id}`}
+                to={`/professor/course/${course.id}`}
                 style={{ textDecoration: 'none', cursor: 'pointer' }}
               >
                 <Card className="rounded-5 overflow-hidden">
@@ -44,4 +44,4 @@ function CourseList() {
   );
 }
 
-export default CourseList;
+export default ProfessorCourseList;

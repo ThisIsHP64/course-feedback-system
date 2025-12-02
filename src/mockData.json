@@ -3,7 +3,8 @@
     { "id": 1, "name": "Ruby Elkharboutly", "role": "professor" },
     { "id": 2, "name": "Hunter Pageau", "role": "student" },
     { "id": 3, "name": "Evan Alves", "role": "student" },
-    { "id": 4, "name": "Jean LaFrance", "role": "student" }
+    { "id": 4, "name": "Jean LaFrance", "role": "student" },
+    { "id": 5, "name": "Boomer Bobcat", "role": "student" }
   ],
   "courses": [
     {

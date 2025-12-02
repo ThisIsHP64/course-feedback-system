@@ -1,9 +1,3 @@
-/**
- * WeekLessonsCard.tsx
- * Used to group lessons by week, a card that displays
- * the week number and the lessons passed as props.
- */
-
 import { Button, Card, ListGroup } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import type { Lesson } from '../types/types';
@@ -15,7 +9,7 @@ type CardProps = {
   lessons: Lesson[];
 };
 
-function WeekLessonsCard({
+function ProfessorLessonsCard({
   weekNumber,
   weekStart,
   weekEnd,
@@ -40,7 +34,7 @@ function WeekLessonsCard({
               <Button
                 className="btn btn-outline-secondary btn-sm"
                 variant="outline-secondary"
-                onClick={() => navigate(`/lesson/${lesson.id}/feedback`)}
+                onClick={() => navigate(`/lesson/${lesson.id}/view`)}
               >
                 View
               </Button>
@@ -52,4 +46,4 @@ function WeekLessonsCard({
   );
 }
 
-export default WeekLessonsCard;
+export default ProfessorLessonsCard;

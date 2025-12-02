@@ -1,26 +1,27 @@
-import { Button } from "react-bootstrap";
-import { Form } from "react-bootstrap";
-import { Container } from "react-bootstrap";
-import { Image } from "react-bootstrap";
-import { Card } from "react-bootstrap";
-import { Row } from "react-bootstrap";
-import { Col } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import logo from "../assets/feedbackLogo.jpg";
+import { Button } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
+import { Container } from 'react-bootstrap';
+import { Image } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
+import { Row } from 'react-bootstrap';
+import { Col } from 'react-bootstrap';
+import { Link, useNavigate } from 'react-router-dom';
+import logo from '../assets/feedbackLogo.jpg';
 
 function Login() {
+  const navigate = useNavigate();
   return (
     <>
       <Container
         fluid
         className="d-flex flex-column justify-content-center align-items-center"
-        style={{ minHeight: "100vh" }}
+        style={{ minHeight: '100vh' }}
       >
-        <Image src={logo} className="mb-4" style={{ height: "140px" }} fluid />
+        <Image src={logo} className="mb-4" style={{ height: '140px' }} fluid />
 
         <Card
           className="qu-blue-bg rounded-5 mb-4"
-          style={{ minWidth: "400px", minHeight: "200px" }}
+          style={{ minWidth: '400px', minHeight: '200px' }}
         >
           <Card.Body className="d-flex flex-column justify-content-center align-items-center">
             <Form>
@@ -35,8 +36,8 @@ function Login() {
               <Col>
                 <Button
                   className="qu-yellow-bg btn-no-border"
-                  onClick={() => console.log("Primary")}
-                  style={{ minWidth: "166px" }}
+                  onClick={() => navigate('/courses')}
+                  style={{ minWidth: '166px' }}
                 >
                   <span className="qu-blue">Log In As Student</span>
                 </Button>
@@ -44,8 +45,8 @@ function Login() {
               <Col>
                 <Button
                   className="qu-yellow-bg btn-no-border"
-                  onClick={() => console.log("Primary")}
-                  style={{ minWidth: "166px" }}
+                  onClick={() => navigate('/professor/courses')}
+                  style={{ minWidth: '166px' }}
                 >
                   <span className="qu-blue">Log In As Professor</span>
                 </Button>
@@ -54,10 +55,10 @@ function Login() {
           </Card.Body>
         </Card>
         <p className="qu-blue">
-          Forgot your password?{" "}
+          Forgot your password?{' '}
           <Link
             to=""
-            style={{ textDecoration: "underline", cursor: "pointer" }}
+            style={{ textDecoration: 'underline', cursor: 'pointer' }}
           >
             Click here
           </Link>

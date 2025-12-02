@@ -1,24 +1,19 @@
-/**
- * LessonList.tsx
- * Page component that displays lesson information. Some page features will be
- * conditionally rendered depending whether the user is a student or a professor.
- */
-
 import '@smastrom/react-rating/style.css';
 import { Alert, Col, Container, Row } from 'react-bootstrap';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 // Mock data
 import data from '../mockData.json';
 import type { Lesson } from '../types/types';
-import WeekLessonsCard from '../components/WeekLessonsCard';
+import ProfessorLessonsCard from '../components/ProfessorLessonsCard';
 
-function LessonList() {
+function ProfessorLessonList() {
   // TODO: Obtain userId from session
   // Obtain courseId from route params
   const currentUserId = 2;
   const params = useParams();
   const courseId = Number(params.courseId) || 1;
+  const navigate = useNavigate();
 
   // Fetch from mockData
   const user = data.users.find((user) => user.id === currentUserId);
@@ -80,13 +75,21 @@ function LessonList() {
               <strong>Taken</strong>
               <p>{course.semester}</p>
             </small>
+            <button
+              className="btn btn-outline-secondary btn-sm mt-3"
+              onClick={() =>
+                navigate(`/professor/course/${course.id}/download`)
+              }
+            >
+              Download Feedback
+            </button>
           </div>
         </Col>
         <Col className="p-4 d-flex justify-content-center">
           <Container style={{ maxWidth: '700px' }}>
             {weeks.map((weekNum) => (
               <Row>
-                <WeekLessonsCard
+                <ProfessorLessonsCard
                   weekNumber={Number(weekNum)}
                   weekStart={new Date()}
                   weekEnd={new Date()}
@@ -101,4 +104,4 @@ function LessonList() {
   );
 }
 
-export default LessonList;
+export default ProfessorLessonList;

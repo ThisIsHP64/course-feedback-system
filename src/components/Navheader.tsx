@@ -19,8 +19,8 @@ import logo2 from '../assets/feedbackLogo2.png';
 import data from '../mockData.json';
 
 function Navheader() {
-  //TODO: Get user from session
-  const userId = 2;
+  // Use mock user id 5 for testing so Profile and Nav match
+  const userId = 5;
   const currentUser = data.users.find((user) => user.id == userId);
   if (!currentUser) {
     return (
@@ -44,15 +44,8 @@ function Navheader() {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            {/**TODO: Link these to places */}
-            <Nav.Link as={Link} to={'/'}>
-              Home
-            </Nav.Link>
-            <Nav.Link as={Link} to={'/'}>
-              Home2
-            </Nav.Link>
-            <Nav.Link as={Link} to={'/'}>
-              Home3
+            <Nav.Link as={Link} to={'/courses'}>
+              Courses
             </Nav.Link>
           </Nav>
           <Nav className="ms-auto">
@@ -69,11 +62,10 @@ function Navheader() {
                   {currentUser.role}
                 </Badge>
               </div>
-              {/**TODO: Link these to places */}
-              <NavDropdown.Item as={Link} to="/">
+              <NavDropdown.Item as={Link} to="/profile">
                 Profile
               </NavDropdown.Item>
-              <NavDropdown.Item as={Link} to="/">
+              <NavDropdown.Item as={Link} to="/login">
                 Logout
               </NavDropdown.Item>
             </NavDropdown>
