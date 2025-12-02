@@ -57,7 +57,7 @@ function Login() {
         <p className="qu-blue">
           Forgot your password?{' '}
           <Link
-            to=""
+            to={'/'}
             style={{ textDecoration: 'underline', cursor: 'pointer' }}
           >
             Click here
