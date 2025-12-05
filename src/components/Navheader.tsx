@@ -12,13 +12,17 @@ import {
   Badge,
 } from 'react-bootstrap';
 import { Person } from 'react-bootstrap-icons';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import logo2 from '../assets/feedbackLogo2.png';
 
 // Mock data
 import data from '../mockData.json';
 
 function Navheader() {
+  const location = useLocation();
+  // Hide navbar on the login route
+  if (location.pathname === '/login') return null;
+
   // Use mock user id 5 for testing so Profile and Nav match
   const userId = 5;
   const currentUser = data.users.find((user) => user.id == userId);

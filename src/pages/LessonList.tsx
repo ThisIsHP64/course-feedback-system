@@ -63,7 +63,7 @@ function LessonList() {
   return (
     <>
       <Row style={{ minHeight: '100vh' }} className="g-0">
-        <Col md={3} className="qu-blue-bg text-white p-4 border-end">
+        <Col xxl={2} md={3} className="qu-blue-bg text-white p-4 border-end">
           <div style={{ maxWidth: '200px' }}>
             <h5 className="mb-3 qu-yellow">
               {course.code} - {course.name}
