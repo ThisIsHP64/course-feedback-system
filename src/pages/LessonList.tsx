@@ -14,11 +14,12 @@ import type { Lesson } from '../types/types';
 import WeekLessonsCard from '../components/WeekLessonsCard';
 
 function LessonList() {
-  // TODO: Obtain userId from session
   // Obtain courseId from route params
-  const currentUserId = 2;
   const params = useParams();
   const courseId = Number(params.courseId) || 1;
+
+  // TODO: Obtain userId from session
+  const currentUserId = 2;
 
   // Fetch from mockData
   const user = data.users.find((user) => user.id === currentUserId);
@@ -61,31 +62,26 @@ function LessonList() {
 
   return (
     <>
-      <Row style={{ minHeight: '100vh' }}>
-        <Col md={3} className="p-4 border-end border-dark">
+      <Row style={{ minHeight: '100vh' }} className="g-0">
+        <Col md={3} className="qu-blue-bg text-white p-4 border-end">
           <div style={{ maxWidth: '200px' }}>
-            <h5 className="mb-2">Course Information</h5>
-            <p className="text-muted small">
+            <h5 className="mb-3 qu-yellow">
               {course.code} - {course.name}
-            </p>
-            <small className="text-secondary">
-              <strong>Average Grade</strong>
-              <p>{course.avgGrade}/100</p>
-            </small>
-            <small className="text-secondary">
-              <strong>Professor</strong>
-              <p>{professorName}</p>
-            </small>
-            <small className="text-secondary">
-              <strong>Taken</strong>
-              <p>{course.semester}</p>
-            </small>
+            </h5>
+            <hr className="opacity-25" />
+            <p className="opacity-75 mb-4">{course.description}</p>
+            <h6 className="opacity-85 mb-0">Average Grade</h6>
+            <small className="opacity-75">{course.avgGrade}/100</small>
+            <h6 className="opacity-85 mb-0 mt-3">Instructor</h6>
+            <small className="opacity-75">{professorName}</small>
+            <h6 className="opacity-85 mb-0 mt-3">Taken</h6>
+            <small className="opacity-75">{course.semester}</small>
           </div>
         </Col>
         <Col className="p-4 d-flex justify-content-center">
           <Container style={{ maxWidth: '700px' }}>
             {weeks.map((weekNum) => (
-              <Row>
+              <Row key={weekNum}>
                 <WeekLessonsCard
                   weekNumber={Number(weekNum)}
                   weekStart={new Date()}

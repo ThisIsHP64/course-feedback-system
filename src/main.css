@@ -15,5 +15,10 @@
 }
 
 .btn-no-border {
-    border: none;
+  border: none;
+}
+
+.navbar {
+  height: 72px !important;
+  padding: 0 8px !important;
 }

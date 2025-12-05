@@ -20,7 +20,7 @@ function ViewFeedback() {
   const user = data.users.find((user) => user.id === currentUserId);
   if (!user || user.role != 'professor') {
     return (
-      <Container>
+      <Container className="mt-4">
         <Alert variant="danger">Bad user</Alert>
       </Container>
     );
@@ -28,7 +28,7 @@ function ViewFeedback() {
   const lesson = data.lessons.find((lesson) => lesson.id === lessonID);
   if (!lesson) {
     return (
-      <Container>
+      <Container className="mt-4">
         <Alert variant="danger">No lesson</Alert>
       </Container>
     );
@@ -38,7 +38,7 @@ function ViewFeedback() {
   );
   if (!lessonCourse) {
     return (
-      <Container>
+      <Container className="mt-4">
         <Alert variant="danger">No lesson course</Alert>
       </Container>
     );
@@ -49,28 +49,38 @@ function ViewFeedback() {
 
   return (
     <>
-      <Row style={{ minHeight: '100vh' }}>
-        <Col md={3} className="p-4 border-end border-dark">
+      <Row style={{ minHeight: '100vh' }} className="g-0">
+        <Col md={3} className="qu-blue-bg text-white p-4 border-end">
           <div style={{ maxWidth: '200px' }}>
-            <h5 className="mb-2">
+            <h5 className="mb-3 qu-yellow">
               {lessonCourse.code} - {lessonCourse.name}
             </h5>
-            <h6 className="text-muted">
-              Lesson {lesson.week} - {lesson.title}
+            <hr className="opacity-25" />
+            <h6 className="opacity-85 mb-3">
+              Lesson {lesson.id} - {lesson.title}
             </h6>
+            <small className="opacity-75">{lesson.description}</small>
           </div>
         </Col>
-        <Col className="p-4 d-flex justify-content-center">
+        <Col className="p-4 justify-content-center">
           <Container style={{ maxWidth: '700px' }}>
-            {feedbacks.map((feedback) => (
-              <Row>
-                <FeedbackCard
-                  comment={feedback.comment}
-                  rating={feedback.rating}
-                  date={new Date(feedback.submittedAt)}
-                />
-              </Row>
-            ))}
+            {feedbacks.length === 0 ? (
+              <Alert variant="info">
+                No feedback submitted yet for this lesson.
+              </Alert>
+            ) : (
+              feedbacks.map((feedback) => (
+                <Row key={feedback.id}>
+                  <FeedbackCard
+                    comment={feedback.comment}
+                    rating={feedback.rating}
+                    contentQuality={feedback.contentQuality}
+                    pacing={feedback.pacing}
+                    date={new Date(feedback.submittedAt)}
+                  />
+                </Row>
+              ))
+            )}
           </Container>
         </Col>
       </Row>

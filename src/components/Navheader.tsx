@@ -31,15 +31,10 @@ function Navheader() {
   }
 
   return (
-    <Navbar
-      variant="dark"
-      expand="lg"
-      className="qu-blue-bg shadow-sm"
-      sticky="top"
-    >
+    <Navbar variant="dark" expand="lg" className="qu-blue-bg">
       <Container fluid>
-        <Navbar.Brand as={Link} to="/">
-          <img src={logo2} alt="Logo" height={30} />
+        <Navbar.Brand className="pb-0" as={Link} to="/">
+          <img src={logo2} alt="Logo" height={48} />
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">

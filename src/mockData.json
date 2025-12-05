@@ -93,7 +93,9 @@
       "lessonId": 1,
       "studentId": 2,
       "rating": 5,
-      "comment": "Great introduction, very clear!",
+      "contentQuality": "good",
+      "pacing": "good",
+      "comment": "Great introduction, very clear and well-organized! The instructor explained everything at a good pace.",
       "submittedAt": "2025-08-26T10:00:00Z"
     },
     {
@@ -101,7 +103,9 @@
       "lessonId": 1,
       "studentId": 4,
       "rating": 3,
-      "comment": "SE cycles are a little confusing",
+      "contentQuality": "average",
+      "pacing": "fast",
+      "comment": "SE cycles are a little confusing. The material went a bit too fast for me to fully absorb.",
       "submittedAt": "2025-08-26T12:30:00Z"
     },
     {
@@ -109,7 +113,9 @@
       "lessonId": 1,
       "studentId": 3,
       "rating": 4,
-      "comment": "I liked the presentation pictures",
+      "contentQuality": "good",
+      "pacing": "good",
+      "comment": "I liked the presentation pictures and visuals. They really helped me understand the concepts better.",
       "submittedAt": "2025-09-02T09:15:00Z"
     }
   ]
