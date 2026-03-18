@@ -9,8 +9,7 @@ const LessonSchema: Schema = new Schema(
     },
     title: { type: String, required: true },
     description: { type: String },
-    date: { type: Date, required: true },
-    week: { type: Number, required: true },
+    date: { type: Date, required: true }, // week removed as redundant
   },
   { timestamps: true },
 );
