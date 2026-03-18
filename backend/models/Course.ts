@@ -12,7 +12,7 @@ const CourseSchema: Schema = new Schema(
       required: true,
     },
     avgGrade: { type: Number, default: 0 },
-    students: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Student' }],
+    students: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   },
   { timestamps: true },
 );
