@@ -1,0 +1,10 @@
+# Build artifacts
+dist/
+build/
+coverage/
+
+# Lock files
+package-lock.json
+
+# OS files
+.DS_Store
