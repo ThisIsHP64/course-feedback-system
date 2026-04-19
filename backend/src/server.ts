@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
+import passport from './middleware/passport.js';
 import authRouter from './routers/auth.js';
 import usersRouter from './routers/users.js';
 import coursesRouter from './routers/courses.js';
@@ -14,6 +15,7 @@ const MONGO_URI = process.env.MONGO_URI ?? 'mongodb://localhost:27017/course-fee
 
 app.use(cors());
 app.use(express.json());
+app.use(passport.initialize());
 
 app.use('/api/auth', authRouter);
 app.use('/api/users', usersRouter);
