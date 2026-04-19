@@ -1,5 +1,17 @@
 import type mongoose from 'mongoose';
 
+// Augment Express.User so passport's req.user matches our auth shape everywhere
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace Express {
+    interface User {
+      id: string;
+      role: string;
+      name?: string;
+    }
+  }
+}
+
 export interface IStudent {
   name: string;
   email: string;
