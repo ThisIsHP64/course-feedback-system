@@ -10,6 +10,7 @@
     "dev": "nodemon",
     "build": "tsc",
     "start": "node dist/server.js",
+    "seed": "node --loader ts-node/esm src/seedDB.ts",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --detectOpenHandles"
   },
   "keywords": [],

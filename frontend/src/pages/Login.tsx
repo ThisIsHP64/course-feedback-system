@@ -1,13 +1,46 @@
 import { useState } from 'react';
-import { Button, Form, Container, Image, Card, Row, Col } from 'react-bootstrap';
+import { Button, Form, Container, Image, Card, Row, Col, Alert } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/feedbackLogo.jpg';
 
 function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const isValidEmail = email.endsWith('@qu.edu');
+
+  async function handleLogin() {
+    setError(null);
+    setIsLoading(true);
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json() as { message: string };
+        setError(data.message ?? 'Login failed');
+        return;
+      }
+
+      const data = await res.json() as {
+        token: string;
+        user: { id: string; name: string; role: 'student' | 'professor' };
+      };
+      localStorage.setItem('auth_token', data.token);
+      localStorage.setItem('auth_user', JSON.stringify(data.user));
+      navigate(data.user.role === 'professor' ? '/professor/courses' : '/courses');
+    } catch {
+      setError('Network error. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   return (
     <>
@@ -23,6 +56,11 @@ function Login() {
           style={{ minWidth: '400px', minHeight: '200px' }}
         >
           <Card.Body className="d-flex flex-column justify-content-center align-items-center">
+            {error && (
+              <Alert variant="danger" className="w-100 text-center py-2">
+                {error}
+              </Alert>
+            )}
             <Form>
               <Form.Group controlId="email" className="mb-3">
                 <Form.Control
@@ -33,7 +71,12 @@ function Login() {
                 />
               </Form.Group>
               <Form.Group controlId="password" className="mb-3">
-                <Form.Control type="password" placeholder="Enter password" />
+                <Form.Control
+                  type="password"
+                  placeholder="Enter password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
               </Form.Group>
             </Form>
 
@@ -41,21 +84,11 @@ function Login() {
               <Col>
                 <Button
                   className="qu-yellow-bg btn-no-border"
-                  disabled={!isValidEmail}
-                  onClick={() => navigate('/courses')}
+                  disabled={!isValidEmail || isLoading}
+                  onClick={handleLogin}
                   style={{ minWidth: '166px' }}
                 >
-                  <span className="qu-blue">Log In As Student</span>
-                </Button>
-              </Col>
-              <Col>
-                <Button
-                  className="qu-yellow-bg btn-no-border"
-                  disabled={!isValidEmail}
-                  onClick={() => navigate('/professor/courses')}
-                  style={{ minWidth: '166px' }}
-                >
-                  <span className="qu-blue">Log In As Professor</span>
+                  <span className="qu-blue">{isLoading ? 'Logging in...' : 'Log In'}</span>
                 </Button>
               </Col>
             </Row>
