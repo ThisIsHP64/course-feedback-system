@@ -1,46 +1,64 @@
 import { useState } from 'react';
 import { Button, Form, Container, Image, Card, Row, Col, Alert } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import logo from '../assets/feedbackLogo.jpg';
+
+const loginSchema = z.object({
+  email: z
+    .string()
+    .email('Invalid email address')
+    .endsWith('@qu.edu', 'Must be a Quinnipiac email (@qu.edu)'),
+  password: z.string().min(1, 'Password is required'),
+});
+
+type LoginFormInputs = z.infer<typeof loginSchema>;
 
 function Login() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [apiError, setApiError] = useState<string | null>(null);
 
-  const isValidEmail = email.endsWith('@qu.edu');
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm<LoginFormInputs>({
+    resolver: zodResolver(loginSchema),
+    mode: 'onChange',
+  });
 
-  async function handleLogin() {
-    setError(null);
+  const onSubmit = async (data: LoginFormInputs) => {
+    setApiError(null);
     setIsLoading(true);
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify(data),
       });
 
       if (!res.ok) {
-        const data = await res.json() as { message: string };
-        setError(data.message ?? 'Login failed');
+        const resData = (await res.json()) as { message: string };
+        setApiError(resData.message ?? 'Login failed');
         return;
       }
 
-      const data = await res.json() as {
+      const resData = (await res.json()) as {
         token: string;
         user: { id: string; name: string; role: 'student' | 'professor' };
       };
-      localStorage.setItem('auth_token', data.token);
-      localStorage.setItem('auth_user', JSON.stringify(data.user));
-      navigate(data.user.role === 'professor' ? '/professor/courses' : '/courses');
+      localStorage.setItem('auth_token', resData.token);
+      localStorage.setItem('auth_user', JSON.stringify(resData.user));
+      navigate(resData.user.role === 'professor' ? '/professor/courses' : '/courses');
     } catch {
-      setError('Network error. Please try again.');
+      setApiError('Network error. Please try again.');
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   return (
     <>
@@ -56,42 +74,49 @@ function Login() {
           style={{ minWidth: '400px', minHeight: '200px' }}
         >
           <Card.Body className="d-flex flex-column justify-content-center align-items-center">
-            {error && (
+            {apiError && (
               <Alert variant="danger" className="w-100 text-center py-2">
-                {error}
+                {apiError}
               </Alert>
             )}
-            <Form>
+            <Form onSubmit={handleSubmit(onSubmit)} className="w-100">
               <Form.Group controlId="email" className="mb-3">
                 <Form.Control
                   type="email"
                   placeholder="Enter email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  isInvalid={!!errors.email}
+                  {...register('email')}
                 />
+                <Form.Control.Feedback type="invalid">
+                  {errors.email?.message}
+                </Form.Control.Feedback>
               </Form.Group>
+
               <Form.Group controlId="password" className="mb-3">
                 <Form.Control
                   type="password"
                   placeholder="Enter password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  isInvalid={!!errors.password}
+                  {...register('password')}
                 />
+                <Form.Control.Feedback type="invalid">
+                  {errors.password?.message}
+                </Form.Control.Feedback>
               </Form.Group>
-            </Form>
 
-            <Row className="gx-2">
-              <Col>
-                <Button
-                  className="qu-yellow-bg btn-no-border"
-                  disabled={!isValidEmail || isLoading}
-                  onClick={handleLogin}
-                  style={{ minWidth: '166px' }}
-                >
-                  <span className="qu-blue">{isLoading ? 'Logging in...' : 'Log In'}</span>
-                </Button>
-              </Col>
-            </Row>
+              <Row className="gx-2 justify-content-center mt-4">
+                <Col xs="auto">
+                  <Button
+                    type="submit"
+                    className="qu-yellow-bg btn-no-border"
+                    disabled={!isValid || isLoading}
+                    style={{ minWidth: '166px' }}
+                  >
+                    <span className="qu-blue">{isLoading ? 'Logging in...' : 'Log In'}</span>
+                  </Button>
+                </Col>
+              </Row>
+            </Form>
           </Card.Body>
         </Card>
 

@@ -4,22 +4,35 @@
  * they have attended.
  */
 
-import { useState } from 'react';
 import { Rating } from '@smastrom/react-rating';
 import '@smastrom/react-rating/style.css';
 import { Alert, Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { useParams } from 'react-router-dom';
 
 // Mock data
 import data from '../mockData.json';
-import { useParams } from 'react-router-dom';
+
+const feedbackSchema = z.object({
+  rating: z.number().min(1, 'Please provide a star rating').max(5),
+  contentQuality: z.enum(['good', 'average', 'poor'], {
+    message: 'Please select a content quality rating',
+  }),
+  pacing: z.enum(['good', 'slow', 'fast'], { message: 'Please select a pacing rating' }),
+  comment: z.string().refine((val) => val.trim().split(/\s+/).length >= 5, {
+    message: 'Please provide a comment of at least 5 words. Feedback helps improve future lessons.',
+  }),
+});
+
+type FeedbackFormInputs = z.infer<typeof feedbackSchema>;
 
 function LogFeedback() {
-  // Obtain lessonId from route params
   const params = useParams<{ lessonId: string }>();
   const lessonId = params.lessonId ? parseInt(params.lessonId, 10) : null;
 
-  // TODO: Obtain userId from session
-  const currentUserId = 2; // Fetch from mockData
+  const currentUserId = 2;
 
   const lesson = data.lessons.find((lesson) => lesson.id === lessonId);
   const existingFeedback = data.feedbacks.find(
@@ -28,14 +41,19 @@ function LogFeedback() {
   const lessonCourse = data.courses.find((course) => course.id === lesson?.courseId);
   const professorName = data.users.find((prof) => prof.id === lessonCourse?.professorId)?.name;
 
-  // States
-  const [rating, setRating] = useState(existingFeedback?.rating || 0);
-  const [contentQuality, setContentQuality] = useState('');
-  const [pacing, setPacing] = useState('');
-  const [comment, setComment] = useState(existingFeedback?.comment || '');
-  const [error, setError] = useState('');
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<FeedbackFormInputs>({
+    resolver: zodResolver(feedbackSchema),
+    defaultValues: {
+      rating: existingFeedback?.rating || 0,
+      comment: existingFeedback?.comment || '',
+    },
+  });
 
-  // Handle invalid lessonId
   if (!lessonId || isNaN(lessonId)) {
     return (
       <Container className="mt-4">
@@ -44,45 +62,16 @@ function LogFeedback() {
     );
   }
 
-  // Handle lesson not found
-  if (!lesson)
+  if (!lesson) {
     return (
       <Container className="mt-4">
         <Alert variant="danger">Lesson not found</Alert>
       </Container>
     );
+  }
 
-  // Handle submission and validation
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (rating === 0) {
-      setError('Please provide a star rating');
-      return;
-    }
-    if (!contentQuality) {
-      setError('Please select a content quality rating');
-      return;
-    }
-    if (!pacing) {
-      setError('Please select a pacing rating');
-      return;
-    }
-    if (comment.trim().split(' ').length < 5) {
-      setError(
-        'Please provide a comment of at least 5 words. Feedback helps improve future lessons.',
-      );
-      return;
-    }
-
-    // TODO: Update saved data
-    const feedbackData = {
-      rating,
-      contentQuality,
-      pacing,
-      comment,
-    };
-    console.log('Submitting feedback:', feedbackData); // Log it for now
+  const onSubmit = (formData: FeedbackFormInputs) => {
+    console.log('Submitting feedback:', formData);
   };
 
   return (
@@ -109,22 +98,26 @@ function LogFeedback() {
               <h5 className="m-0">{existingFeedback ? 'Edit Feedback' : 'Log Feedback'}</h5>
             </Card.Header>
             <Card.Body>
-              <Form onSubmit={onSubmit}>
-                {error && <Alert variant="danger">{error}</Alert>}
+              <Form onSubmit={handleSubmit(onSubmit)}>
                 <Form.Group className="mb-3">
                   <Form.Label className="qu-blue fw-bold mb-0">Overall Rating</Form.Label>
                   <Form.Text className="text-muted d-block pb-2">
                     How would you rate this lesson overall?
                   </Form.Text>
                   <div style={{ maxWidth: 300 }}>
-                    <Rating
-                      value={rating}
-                      onChange={setRating}
-                      isRequired
-                      style={{ maxWidth: 200 }}
+                    <Controller
+                      name="rating"
+                      control={control}
+                      render={({ field: { onChange, value } }) => (
+                        <Rating value={value} onChange={onChange} style={{ maxWidth: 200 }} />
+                      )}
                     />
                   </div>
+                  {errors.rating && (
+                    <div className="text-danger small mt-1">{errors.rating.message}</div>
+                  )}
                 </Form.Group>
+
                 <Form.Group className="mb-3">
                   <Form.Label className="qu-blue fw-bold mb-0">Content Quality</Form.Label>
                   <Form.Text className="text-muted d-block pb-2">
@@ -134,11 +127,9 @@ function LogFeedback() {
                     <div>
                       <input
                         type="radio"
-                        name="content"
                         id="contentGood"
                         value="good"
-                        checked={contentQuality === 'good'}
-                        onChange={(e) => setContentQuality(e.target.value)}
+                        {...register('contentQuality')}
                       />
                       <label htmlFor="contentGood" className="ms-2">
                         Excellent
@@ -147,11 +138,9 @@ function LogFeedback() {
                     <div>
                       <input
                         type="radio"
-                        name="content"
                         id="contentAvg"
                         value="average"
-                        checked={contentQuality === 'average'}
-                        onChange={(e) => setContentQuality(e.target.value)}
+                        {...register('contentQuality')}
                       />
                       <label htmlFor="contentAvg" className="ms-2">
                         Good
@@ -160,18 +149,20 @@ function LogFeedback() {
                     <div>
                       <input
                         type="radio"
-                        name="content"
                         id="contentPoor"
                         value="poor"
-                        checked={contentQuality === 'poor'}
-                        onChange={(e) => setContentQuality(e.target.value)}
+                        {...register('contentQuality')}
                       />
                       <label htmlFor="contentPoor" className="ms-2">
                         Needs Improvement
                       </label>
                     </div>
                   </div>
+                  {errors.contentQuality && (
+                    <div className="text-danger small mt-1">{errors.contentQuality.message}</div>
+                  )}
                 </Form.Group>
+
                 <Form.Group className="mb-3">
                   <Form.Label className="qu-blue fw-bold mb-0">Pacing</Form.Label>
                   <Form.Text className="text-muted d-block pb-2">
@@ -179,46 +170,29 @@ function LogFeedback() {
                   </Form.Text>
                   <div className="d-flex gap-3 small">
                     <div>
-                      <input
-                        type="radio"
-                        name="pacing"
-                        id="pacingGood"
-                        value="good"
-                        checked={pacing === 'good'}
-                        onChange={(e) => setPacing(e.target.value)}
-                      />
+                      <input type="radio" id="pacingGood" value="good" {...register('pacing')} />
                       <label htmlFor="pacingGood" className="ms-2">
                         Just Right
                       </label>
                     </div>
                     <div>
-                      <input
-                        type="radio"
-                        name="pacing"
-                        id="pacingSlow"
-                        value="slow"
-                        checked={pacing === 'slow'}
-                        onChange={(e) => setPacing(e.target.value)}
-                      />
+                      <input type="radio" id="pacingSlow" value="slow" {...register('pacing')} />
                       <label htmlFor="pacingSlow" className="ms-2">
                         Too Slow
                       </label>
                     </div>
                     <div>
-                      <input
-                        type="radio"
-                        name="pacing"
-                        id="pacingFast"
-                        value="fast"
-                        checked={pacing === 'fast'}
-                        onChange={(e) => setPacing(e.target.value)}
-                      />
+                      <input type="radio" id="pacingFast" value="fast" {...register('pacing')} />
                       <label htmlFor="pacingFast" className="ms-2">
                         Too Fast
                       </label>
                     </div>
                   </div>
+                  {errors.pacing && (
+                    <div className="text-danger small mt-1">{errors.pacing.message}</div>
+                  )}
                 </Form.Group>
+
                 <Form.Group className="mb-3">
                   <Form.Label className="qu-blue fw-bold mb-0">Detailed Feedback</Form.Label>
                   <Form.Text className="text-muted d-block pb-2">
@@ -228,16 +202,19 @@ function LogFeedback() {
                     as="textarea"
                     rows={4}
                     placeholder="Share your thoughts to help improve future lessons..."
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
                     className="border-2"
+                    isInvalid={!!errors.comment}
+                    {...register('comment')}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.comment?.message}
+                  </Form.Control.Feedback>
                 </Form.Group>
+
                 <div className="d-flex gap-2 justify-content-center">
                   <Button className="qu-blue-bg border-0" type="submit" size="lg">
                     Submit Feedback
                   </Button>
-                  {/* TODO: Cancel button navigate back to */}
                   <Button variant="outline-secondary" size="lg">
                     Cancel
                   </Button>

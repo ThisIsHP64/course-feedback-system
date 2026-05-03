@@ -1,8 +1,37 @@
-import { Button } from 'react-bootstrap';
-import { Form } from 'react-bootstrap';
-import { Container } from 'react-bootstrap';
+import { Button, Form, Container } from 'react-bootstrap';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+
+const resetSchema = z
+  .object({
+    email: z
+      .string()
+      .email('Invalid email address')
+      .endsWith('@qu.edu', 'Must be a Quinnipiac email'),
+    newPassword: z.string().min(8, 'Password must be at least 8 characters'),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+  });
+
+type ResetFormInputs = z.infer<typeof resetSchema>;
 
 function ResetPassword() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ResetFormInputs>({
+    resolver: zodResolver(resetSchema),
+  });
+
+  const onSubmit = (data: ResetFormInputs) => {
+    console.log('Reset Password Submitted:', data);
+  };
+
   return (
     <>
       <Container
@@ -11,25 +40,47 @@ function ResetPassword() {
         fluid
       >
         <h2 className="qu-blue mb-3">Reset Password</h2>
-        <Form>
+        <Form onSubmit={handleSubmit(onSubmit)} className="w-100" style={{ maxWidth: '400px' }}>
           <Form.Group controlId="email" className="mb-3">
-            <Form.Control type="email" placeholder="Quinnipiac email" />
+            <Form.Control
+              type="email"
+              placeholder="Quinnipiac email"
+              isInvalid={!!errors.email}
+              {...register('email')}
+            />
+            <Form.Control.Feedback type="invalid">{errors.email?.message}</Form.Control.Feedback>
           </Form.Group>
+
           <Form.Group controlId="newPassword" className="mb-3">
-            <Form.Control type="password" placeholder="New password" />
+            <Form.Control
+              type="password"
+              placeholder="New password"
+              isInvalid={!!errors.newPassword}
+              {...register('newPassword')}
+            />
+            <Form.Control.Feedback type="invalid">
+              {errors.newPassword?.message}
+            </Form.Control.Feedback>
           </Form.Group>
+
           <Form.Group controlId="confirmPassword" className="mb-3">
-            <Form.Control type="password" placeholder="Confirm new password" />
+            <Form.Control
+              type="password"
+              placeholder="Confirm new password"
+              isInvalid={!!errors.confirmPassword}
+              {...register('confirmPassword')}
+            />
+            <Form.Control.Feedback type="invalid">
+              {errors.confirmPassword?.message}
+            </Form.Control.Feedback>
           </Form.Group>
+
+          <div className="d-grid">
+            <Button type="submit" variant="primary" size="lg" className="qu-blue-bg btn-no-border">
+              Submit
+            </Button>
+          </div>
         </Form>
-        <Button
-          variant="primary"
-          size="lg"
-          className="qu-blue-bg btn-no-border"
-          onClick={() => console.log('Primary')}
-        >
-          Submit
-        </Button>
       </Container>
     </>
   );
