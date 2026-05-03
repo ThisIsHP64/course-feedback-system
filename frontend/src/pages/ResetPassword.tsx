@@ -1,7 +1,10 @@
-import { Button, Form, Container } from 'react-bootstrap';
+import { useState } from 'react';
+import { Button, Form, Container, Alert } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const resetSchema = z
   .object({
@@ -20,6 +23,10 @@ const resetSchema = z
 type ResetFormInputs = z.infer<typeof resetSchema>;
 
 function ResetPassword() {
+  const navigate = useNavigate();
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -28,8 +35,18 @@ function ResetPassword() {
     resolver: zodResolver(resetSchema),
   });
 
-  const onSubmit = (data: ResetFormInputs) => {
-    console.log('Reset Password Submitted:', data);
+  const onSubmit = async (data: ResetFormInputs) => {
+    try {
+      setError(null);
+      await axios.put('/api/auth/reset-password', {
+        email: data.email,
+        newPassword: data.newPassword,
+      });
+      setSuccess(true);
+      setTimeout(() => navigate('/login'), 2500);
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to reset password. Please try again.');
+    }
   };
 
   return (
@@ -40,6 +57,16 @@ function ResetPassword() {
         fluid
       >
         <h2 className="qu-blue mb-3">Reset Password</h2>
+        {error && (
+          <Alert variant="danger" style={{ maxWidth: '400px', width: '100%' }}>
+            {error}
+          </Alert>
+        )}
+        {success && (
+          <Alert variant="success" style={{ maxWidth: '400px', width: '100%' }}>
+            Password reset successfully! Redirecting to login...
+          </Alert>
+        )}
         <Form onSubmit={handleSubmit(onSubmit)} className="w-100" style={{ maxWidth: '400px' }}>
           <Form.Group controlId="email" className="mb-3">
             <Form.Control
@@ -75,9 +102,12 @@ function ResetPassword() {
             </Form.Control.Feedback>
           </Form.Group>
 
-          <div className="d-grid">
+          <div className="d-grid gap-2">
             <Button type="submit" variant="primary" size="lg" className="qu-blue-bg btn-no-border">
               Submit
+            </Button>
+            <Button variant="outline-secondary" onClick={() => navigate('/login')}>
+              Cancel
             </Button>
           </div>
         </Form>

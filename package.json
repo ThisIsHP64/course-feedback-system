@@ -4,7 +4,7 @@
   "description": "<p align=\"center\">\r   <img alt=\"logo\" src=\"https://github.com/user-attachments/assets/7f95ca0b-1423-4edf-98c3-b364dd3c1a38\" style=\"max-width:400px; width:70%;\" />\r </p>",
   "main": "index.js",
   "scripts": {
-    "start:frontend": "cd frontend && npm start",
+    "start:frontend": "cd frontend && npm run dev",
     "start:backend": "cd backend && npm run dev",
     "dev": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
     "install-all": "npm install && cd frontend && npm install && cd ../backend && npm install",

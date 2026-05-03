@@ -1,9 +1,10 @@
-import { Button, Col, Container, Row, Form } from 'react-bootstrap';
+import { useEffect, useState } from 'react';
+import { Button, Col, Container, Row, Form, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import data from '../mockData.json';
+import axios from 'axios';
 import profilePic from '../assets/EditProfilePicture.png';
 
 const profileSchema = z.object({
@@ -15,34 +16,66 @@ type ProfileFormInputs = z.infer<typeof profileSchema>;
 
 function EditProfile() {
   const navigate = useNavigate();
-  const userId = 5;
+  const [error, setError] = useState<string | null>(null);
 
-  const user = data.users.find((u) => u.id === userId);
+  const userStr = localStorage.getItem('auth_user');
+  const user = userStr ? JSON.parse(userStr) : null;
 
   const {
     register,
     handleSubmit,
     watch,
+    reset,
     formState: { errors },
   } = useForm<ProfileFormInputs>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      name: user?.name || '',
-      bio: 'Software Engineering student at Quinnipiac University.',
+      name: '',
+      bio: '',
     },
   });
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        if (!user) return;
+        const token = localStorage.getItem('auth_token');
+        const res = await axios.get(`/api/users/${user.id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        reset({
+          name: res.data.name,
+          bio: res.data.bio,
+        });
+      } catch (err) {
+        setError('Failed to load profile data');
+      }
+    };
+    fetchProfile();
+  }, [user?.id, reset]);
 
   if (!user) {
     return <p>User not found</p>;
   }
 
   const bioWatch = watch('bio');
+  const nameWatch = watch('name');
 
-  const onSubmit = (data: ProfileFormInputs) => {
-    // There is no backend for this project so this does not actually save anything
-    console.log('Saving profile changes:', data);
-    alert('Profile updated successfully!');
-    navigate('/profile');
+  const onSubmit = async (data: ProfileFormInputs) => {
+    try {
+      const token = localStorage.getItem('auth_token');
+      const res = await axios.put(`/api/users/${user.id}`, data, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const updatedUser = { ...user, name: res.data.name };
+      localStorage.setItem('auth_user', JSON.stringify(updatedUser));
+
+      alert('Profile updated successfully!');
+      navigate('/profile');
+    } catch (err) {
+      setError('Failed to save profile updates');
+    }
   };
 
   return (
@@ -51,12 +84,10 @@ function EditProfile() {
         <Col md={3} className="p-4 border-end border-dark">
           <div>
             <img src={profilePic} alt="Profile" className="rounded-circle w-100 mb-3" />
-            <h5 className="mb-2">{user.name}</h5>
-            <p className="text-muted small mb-3">Junior</p>
-            <small className="text-secondary d-block mb-2">
-              <strong>Feedback Submitted:</strong>
-            </small>
-            <p className="m-0 mb-3">12</p>
+            <h5 className="mb-2">{nameWatch || user.name}</h5>
+            <p className="text-muted small mb-3">
+              {user.role === 'professor' ? 'Professor' : 'Student'}
+            </p>
             <small className="text-secondary d-block mb-2">
               <strong>Bio</strong>
             </small>
@@ -76,6 +107,7 @@ function EditProfile() {
         <Col className="p-4 d-flex justify-content-center">
           <Container style={{ maxWidth: '700px' }}>
             <h4 className="mb-4">Edit Profile</h4>
+            {error && <Alert variant="danger">{error}</Alert>}
             <Form onSubmit={handleSubmit(onSubmit)}>
               <Form.Group className="mb-3">
                 <Form.Label>

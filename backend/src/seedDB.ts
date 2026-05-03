@@ -1,53 +1,90 @@
-/**
- * seedDB.ts
- * Used for seeding the database with users, courses, lessons and feedback.
- * Run separately from server.ts
- */
-
 import 'dotenv/config';
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import Student from './models/Student.js';
 import Professor from './models/Professor.js';
+import Course from './models/Course.js';
+import Lesson from './models/Lesson.js';
+import Feedback from './models/Feedback.js';
 
 const MONGO_URI = process.env['MONGO_URI'] ?? 'mongodb://localhost:27017/course-feedback';
 
-//TODO: Add some lessons, courses, feedbacks. Maybe more users?
 async function seed() {
   await mongoose.connect(MONGO_URI);
-  console.log('Connected to MongoDB');
+
+  await Promise.all([
+    Student.deleteMany({}),
+    Professor.deleteMany({}),
+    Course.deleteMany({}),
+    Lesson.deleteMany({}),
+    Feedback.deleteMany({}),
+  ]);
 
   const password = await bcrypt.hash('password123', 10);
 
-  const existingStudent = await Student.findOne({ email: 'student@qu.edu' });
-  if (!existingStudent) {
-    await Student.create({ name: 'Test Student', email: 'student@qu.edu', password });
-    console.log('Created: student@qu.edu');
-  } else {
-    console.log('Already exists: student@qu.edu');
-  }
+  const prof = await Professor.create({
+    name: 'Ruby Elkharboutly',
+    email: 'professor@qu.edu',
+    password,
+    bio: 'Professor of Software Engineering at Quinnipiac University.',
+  });
 
-  const existingProfessor = await Professor.findOne({ email: 'professor@qu.edu' });
-  if (!existingProfessor) {
-    await Professor.create({ name: 'Test Professor', email: 'professor@qu.edu', password });
-    console.log('Created: professor@qu.edu');
-  } else {
-    console.log('Already exists: professor@qu.edu');
-  }
+  const students = await Student.insertMany([
+    { name: 'Hunter Pageau', email: 'student@qu.edu', password },
+    { name: 'Evan Alves', email: 'evan@qu.edu', password },
+    { name: 'Jean LaFrance', email: 'jean@qu.edu', password },
+    { name: 'Boomer Bobcat', email: 'boomer@qu.edu', password },
+  ]);
+
+  const studentIds = students.map((s) => s._id);
+
+  const courses = await Course.insertMany([
+    {
+      code: 'SER340',
+      name: 'Full Stack Development',
+      professorId: prof._id,
+      description: 'Introduction to Full Stack development',
+      semester: 'Fall 2025',
+      students: studentIds,
+    },
+    {
+      code: 'SER491',
+      name: 'Senior Capstone I',
+      professorId: prof._id,
+      description: 'Senior Project',
+      semester: 'Fall 2025',
+      students: studentIds,
+    },
+  ]);
+
+  const lessons = await Lesson.insertMany([
+    {
+      courseId: courses[0]._id,
+      title: 'Introduction to React',
+      description: 'Overview of components and props',
+      date: new Date('2025-08-26'),
+    },
+    {
+      courseId: courses[0]._id,
+      title: 'State and Lifecycle',
+      description: 'Managing component data',
+      date: new Date('2025-08-28'),
+    },
+  ]);
+
+  await Feedback.create({
+    lessonId: lessons[0]._id,
+    studentId: studentIds[0],
+    rating: 5,
+    contentQuality: 'good',
+    pacing: 'good',
+    comment: 'Great introduction, very clear and well-organized!',
+  });
 
   await mongoose.disconnect();
 }
 
-seed().catch((err: unknown) => {
-  if (err instanceof Error) {
-    console.error('Seed failed:', err.message);
-    if (err.stack) console.error(err.stack);
-  } else {
-    try {
-      console.error('Seed failed:', JSON.stringify(err, null, 2));
-    } catch {
-      console.error('Seed failed with unknown error');
-    }
-  }
+seed().catch((err) => {
+  console.error('Seed failed:', err);
   process.exit(1);
 });

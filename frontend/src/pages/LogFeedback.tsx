@@ -1,19 +1,12 @@
-/**
- * LogFeedback.tsx
- * Page component that allows student users to enter/edit feedback for lessons
- * they have attended.
- */
-
 import { Rating } from '@smastrom/react-rating';
 import '@smastrom/react-rating/style.css';
 import { Alert, Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useParams } from 'react-router-dom';
-
-// Mock data
-import data from '../mockData.json';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const feedbackSchema = z.object({
   rating: z.number().min(1, 'Please provide a star rating').max(5),
@@ -29,32 +22,65 @@ const feedbackSchema = z.object({
 type FeedbackFormInputs = z.infer<typeof feedbackSchema>;
 
 function LogFeedback() {
-  const params = useParams<{ lessonId: string }>();
-  const lessonId = params.lessonId ? parseInt(params.lessonId, 10) : null;
+  const { lessonId } = useParams();
+  const navigate = useNavigate();
+  const [lesson, setLesson] = useState<any>(null);
+  const [existingFeedbackId, setExistingFeedbackId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const currentUserId = 2;
-
-  const lesson = data.lessons.find((lesson) => lesson.id === lessonId);
-  const existingFeedback = data.feedbacks.find(
-    (feedback) => feedback.lessonId === lessonId && feedback.studentId === currentUserId,
-  );
-  const lessonCourse = data.courses.find((course) => course.id === lesson?.courseId);
-  const professorName = data.users.find((prof) => prof.id === lessonCourse?.professorId)?.name;
+  const userStr = localStorage.getItem('auth_user');
+  const user = userStr ? JSON.parse(userStr) : null;
 
   const {
     register,
     handleSubmit,
     control,
+    reset,
     formState: { errors },
   } = useForm<FeedbackFormInputs>({
     resolver: zodResolver(feedbackSchema),
     defaultValues: {
-      rating: existingFeedback?.rating || 0,
-      comment: existingFeedback?.comment || '',
+      rating: 0,
+      comment: '',
     },
   });
 
-  if (!lessonId || isNaN(lessonId)) {
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem('auth_token');
+        const headers = { Authorization: `Bearer ${token}` };
+
+        const lessonRes = await axios.get(`/api/lessons/${lessonId}`, { headers });
+        setLesson(lessonRes.data);
+
+        const feedbackRes = await axios.get(
+          `/api/feedbacks?lessonId=${lessonId}&studentId=${user.id}`,
+          { headers },
+        );
+
+        if (feedbackRes.data && feedbackRes.data.length > 0) {
+          const feedback = feedbackRes.data[0];
+          setExistingFeedbackId(feedback._id);
+          reset({
+            rating: feedback.rating,
+            contentQuality: feedback.contentQuality,
+            pacing: feedback.pacing,
+            comment: feedback.comment,
+          });
+        }
+      } catch (err) {
+        setError('Failed to load lesson or feedback data');
+      }
+    };
+
+    // FIX: Depend on user?.id instead of the entire user object
+    if (lessonId && user?.id) {
+      fetchData();
+    }
+  }, [lessonId, user?.id, reset]);
+
+  if (!lessonId) {
     return (
       <Container className="mt-4">
         <Alert variant="danger">Invalid lesson ID provided</Alert>
@@ -62,17 +88,30 @@ function LogFeedback() {
     );
   }
 
+  const onSubmit = async (formData: FeedbackFormInputs) => {
+    try {
+      const token = localStorage.getItem('auth_token');
+      const payload = { ...formData, lessonId };
+      const config = { headers: { Authorization: `Bearer ${token}` } };
+
+      if (existingFeedbackId) {
+        await axios.put(`/api/feedbacks/${existingFeedbackId}`, payload, config);
+      } else {
+        await axios.post('/api/feedbacks', payload, config);
+      }
+      navigate('/courses');
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to submit feedback');
+    }
+  };
+
   if (!lesson) {
     return (
-      <Container className="mt-4">
-        <Alert variant="danger">Lesson not found</Alert>
+      <Container>
+        <p>Loading...</p>
       </Container>
     );
   }
-
-  const onSubmit = (formData: FeedbackFormInputs) => {
-    console.log('Submitting feedback:', formData);
-  };
 
   return (
     <>
@@ -82,22 +121,15 @@ function LogFeedback() {
             <h5 className="mb-3 qu-yellow">{lesson.title}</h5>
             <hr className="opacity-25" />
             <p className="opacity-75 mb-4">{lesson.description}</p>
-            <h6 className="opacity-85 mb-3">
-              Lesson: <span className="opacity-75">{lesson.courseId}</span>
-            </h6>
-            <h6 className="opacity-85 mb-3">
-              Week: <span className="opacity-75">{lesson.week}</span>
-            </h6>
-            <h6 className="opacity-85 mb-0">Instructor</h6>
-            <small className="opacity-75">{professorName}</small>
           </div>
         </Col>
         <Col className="p-4 d-flex justify-content-center">
           <Card style={{ width: '100%', maxWidth: '600px' }} className="shadow-sm mb-auto">
             <Card.Header className="qu-blue-bg text-white">
-              <h5 className="m-0">{existingFeedback ? 'Edit Feedback' : 'Log Feedback'}</h5>
+              <h5 className="m-0">{existingFeedbackId ? 'Edit Feedback' : 'Log Feedback'}</h5>
             </Card.Header>
             <Card.Body>
+              {error && <Alert variant="danger">{error}</Alert>}
               <Form onSubmit={handleSubmit(onSubmit)}>
                 <Form.Group className="mb-3">
                   <Form.Label className="qu-blue fw-bold mb-0">Overall Rating</Form.Label>
@@ -120,9 +152,6 @@ function LogFeedback() {
 
                 <Form.Group className="mb-3">
                   <Form.Label className="qu-blue fw-bold mb-0">Content Quality</Form.Label>
-                  <Form.Text className="text-muted d-block pb-2">
-                    Was the lesson content clear and well-organized?
-                  </Form.Text>
                   <div className="d-flex gap-3 small">
                     <div>
                       <input
@@ -165,9 +194,6 @@ function LogFeedback() {
 
                 <Form.Group className="mb-3">
                   <Form.Label className="qu-blue fw-bold mb-0">Pacing</Form.Label>
-                  <Form.Text className="text-muted d-block pb-2">
-                    Was the lesson pace appropriate?
-                  </Form.Text>
                   <div className="d-flex gap-3 small">
                     <div>
                       <input type="radio" id="pacingGood" value="good" {...register('pacing')} />
@@ -195,14 +221,9 @@ function LogFeedback() {
 
                 <Form.Group className="mb-3">
                   <Form.Label className="qu-blue fw-bold mb-0">Detailed Feedback</Form.Label>
-                  <Form.Text className="text-muted d-block pb-2">
-                    What did you like about the lesson? What could be improved?
-                  </Form.Text>
                   <Form.Control
                     as="textarea"
                     rows={4}
-                    placeholder="Share your thoughts to help improve future lessons..."
-                    className="border-2"
                     isInvalid={!!errors.comment}
                     {...register('comment')}
                   />
@@ -215,7 +236,11 @@ function LogFeedback() {
                   <Button className="qu-blue-bg border-0" type="submit" size="lg">
                     Submit Feedback
                   </Button>
-                  <Button variant="outline-secondary" size="lg">
+                  <Button
+                    variant="outline-secondary"
+                    size="lg"
+                    onClick={() => navigate('/courses')}
+                  >
                     Cancel
                   </Button>
                 </div>

@@ -21,13 +21,13 @@ function ProfessorLessonsCard({ weekNumber, weekStart, weekEnd, lessons }: CardP
       </Card.Header>
       <ListGroup variant="flush">
         {lessons.map((lesson) => (
-          <ListGroup.Item key={lesson.id} className="p-3">
+          <ListGroup.Item key={lesson._id} className="p-3">
             <div className="d-flex justify-content-between">
               <h6 className="text-primary fw-bold align-self-center m-0">{lesson.title}</h6>
               <Button
                 className="btn btn-outline-secondary btn-sm"
                 variant="outline-secondary"
-                onClick={() => navigate(`/lesson/${lesson.id}/view`)}
+                onClick={() => navigate(`/lesson/${lesson._id}/view`)}
               >
                 View
               </Button>

@@ -1,37 +1,34 @@
-// Users
 export interface User {
-  id: number;
+  _id: string;
   name: string;
   role: 'student' | 'professor';
 }
 
-// Course Info
 export interface Course {
-  id: number;
+  _id: string;
   code: string;
   name: string;
-  professorId: string;
+  professorId: any;
   description: string;
   semester: string;
-  avgGrage: number;
+  avgGrade?: number;
 }
 
-// Lesson Info
 export interface Lesson {
-  id: number;
-  courseId: number;
+  _id: string;
+  courseId: string;
   title: string;
   date: string;
   description: string;
-  week: number;
 }
 
-// Feedback
 export interface Feedback {
-  id: number;
-  lessonId: number;
-  studentId: number;
+  _id: string;
+  lessonId: string;
+  studentId: string;
   rating: number;
+  contentQuality: string;
+  pacing: string;
   comment: string;
-  submittedAt: string;
+  createdAt: string;
 }

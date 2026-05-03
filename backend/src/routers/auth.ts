@@ -1,8 +1,3 @@
-/**
- * \routers\auth.ts
- * Router that handles the /api/auth route
- */
-
 import { Router, type Request, type Response, type NextFunction } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -15,7 +10,6 @@ import passport from '../middleware/passport.js';
 
 const router = Router();
 
-// POST /api/auth/login
 router.route('/login').post((req: Request, res: Response, next: NextFunction): void => {
   if (!req.body.email || !req.body.password) {
     res.status(400).json({ message: 'Email and password are required' });
@@ -41,7 +35,6 @@ router.route('/login').post((req: Request, res: Response, next: NextFunction): v
   )(req, res, next);
 });
 
-// PUT /api/auth/change-password
 router
   .route('/change-password')
   .put(requireAuth, async (req: AuthRequest, res: Response): Promise<void> => {
@@ -52,7 +45,6 @@ router
       return;
     }
 
-    // Get user id based on role
     const user: HydratedDocument<IStudent> | HydratedDocument<IProfessor> | null =
       req.user!.role === 'student'
         ? await Student.findById(req.user!.id)
@@ -62,18 +54,41 @@ router
       return;
     }
 
-    // Compare password hash
     const match = await bcrypt.compare(oldPassword, user.password);
     if (!match) {
       res.status(400).json({ message: 'Current password is incorrect' });
       return;
     }
 
-    // Hash new password
     user.password = await bcrypt.hash(newPassword, 10);
     await user.save();
 
     res.json({ message: 'Password updated successfully' });
   });
+
+router.route('/reset-password').put(async (req: Request, res: Response): Promise<void> => {
+  const { email, newPassword } = req.body;
+
+  if (!email || !newPassword) {
+    res.status(400).json({ message: 'Email and new password are required' });
+    return;
+  }
+
+  let user: HydratedDocument<IStudent> | HydratedDocument<IProfessor> | null =
+    await Student.findOne({ email });
+  if (!user) {
+    user = await Professor.findOne({ email });
+  }
+
+  if (!user) {
+    res.status(404).json({ message: 'Account not found for that email' });
+    return;
+  }
+
+  user.password = await bcrypt.hash(newPassword, 10);
+  await user.save();
+
+  res.json({ message: 'Password reset successfully' });
+});
 
 export default router;

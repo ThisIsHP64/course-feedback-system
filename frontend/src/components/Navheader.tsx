@@ -1,42 +1,39 @@
-/**
- * Navbar.tsx
- * Global Navbar component
- */
-
-import { Navbar, Container, Nav, NavDropdown, Alert, Badge } from 'react-bootstrap';
+import { Navbar, Container, Nav, NavDropdown, Badge } from 'react-bootstrap';
 import { Person } from 'react-bootstrap-icons';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import logo2 from '../assets/feedbackLogo2.png';
-
-// Mock data
-import data from '../mockData.json';
 
 function Navheader() {
   const location = useLocation();
-  // Hide navbar on the login route
-  if (location.pathname === '/login') return null;
+  const navigate = useNavigate();
 
-  // Use mock user id 5 for testing so Profile and Nav match
-  const userId = 5;
-  const currentUser = data.users.find((user) => user.id == userId);
+  if (location.pathname === '/login' || location.pathname === '/reset-password') return null;
+
+  const userStr = localStorage.getItem('auth_user');
+  const currentUser = userStr ? JSON.parse(userStr) : null;
+
   if (!currentUser) {
-    return (
-      <Container>
-        <Alert variant="danger">No user</Alert>
-      </Container>
-    );
+    return null;
   }
+
+  const homePath = currentUser.role === 'professor' ? '/professor/courses' : '/courses';
+
+  const handleLogout = () => {
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('auth_user');
+    navigate('/login');
+  };
 
   return (
     <Navbar variant="dark" expand="lg" className="qu-blue-bg">
       <Container fluid>
-        <Navbar.Brand className="pb-0" as={Link} to="/">
+        <Navbar.Brand className="pb-0" as={Link} to={homePath}>
           <img src={logo2} alt="Logo" height={48} />
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link as={Link} to={'/courses'}>
+            <Nav.Link as={Link} to={homePath}>
               Courses
             </Nav.Link>
           </Nav>
@@ -57,9 +54,7 @@ function Navheader() {
               <NavDropdown.Item as={Link} to="/profile">
                 Profile
               </NavDropdown.Item>
-              <NavDropdown.Item as={Link} to="/login">
-                Logout
-              </NavDropdown.Item>
+              <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
             </NavDropdown>
           </Nav>
         </Navbar.Collapse>
